@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'wifi_core',
     'users',
+    'wifi'
 ]
 
 # REST Framework settings
