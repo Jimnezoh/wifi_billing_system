@@ -12,17 +12,27 @@ class UserManager(BaseUserManager):
         user.set_password(password or self.make_random_password(length=6))
         user.save(using=self._db)
         return user
-    
-    def create_superuser(self, email, password= None, **extra_fields):
+
+    def create_superuser(self, phone_number, password=None, **extra_fields):
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
-        user = self.model(email=email, role='super_admin', **extra_fields)
+        user = self.model(phone_number=phone_number, role='super_admin', **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
         return user
     
-    def normalize_phone_number(self, phone):
-        return phone.strip(' ','')
+    # To Normalize phone to 2547XXXXXXXX format. hii inasaidia pia kwa postman api testing.
+    def normalize_phone(self, phone):
+        phone = phone.strip().replace(" ", "").replace("+", "")
+
+        if phone.startswith("07") and len(phone) == 10:
+            return "254" + phone[1:]
+        elif phone.startswith("254") and len(phone) == 12:
+            return phone
+        elif phone.startswith("1") and len(phone) == 9:
+            return "254" + phone
+        else:
+            raise ValueError("Invalid phone number format. Expected 07XXXXXXXX or 2547XXXXXXXX.")
     
 
 #Class now to determine the roles
