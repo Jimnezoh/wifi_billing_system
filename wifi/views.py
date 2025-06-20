@@ -8,14 +8,12 @@ from rest_framework.decorators import permission_classes
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
-def generate_access_code(request):
+def generate_wifi_code(request):
     serializer = WifiAccessCodeSerializer(data=request.data)
     if serializer.is_valid():
         access_code = serializer.save()
         return Response({
-            "message": "Access code generated successfully",
+            "message": "WiFi access code generated successfully",
             "code": access_code.code,
             "expires_at": access_code.expires_at
-            },
-            status=status.HTTP_201_CREATED
-        )
+        }, status=status.HTTP_201_CREATED)
