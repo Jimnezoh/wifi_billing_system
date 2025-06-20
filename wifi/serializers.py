@@ -15,12 +15,11 @@ class WifiAccessCodeSerializer(serializers.Serializer):
         phone = validated_data.pop('phone_number')
         name = validated_data.pop('full_name', None)
 
-        # Normalize phone
+        # Normalize phone_number format
         phone = phone.strip().replace(" ", "").replace("+", "")
         if phone.startswith("07") and len(phone) == 10:
             phone = "254" + phone[1:]
 
-        # Get or create the user
         user, created = User.objects.get_or_create(phone_number=phone, defaults={"full_name": name, "role": "client"})
 
         access_code = WifiAccessCode.objects.create(user=user, **validated_data)
