@@ -1,6 +1,7 @@
 #model to store wifi access code and track payment.
 
-from time import timezone
+from django.utils import timezone
+from datetime import timedelta
 from django.db import models
 import random
 import string
@@ -23,8 +24,8 @@ class WifiAccessCode(models.Model):
     def save(self, *args, **kwargs):
         if not self.code:
             self.code = self.generate_code()
-        if not self.expires_at:
-            self.expires_at = timezone.now() + timezone.timedelta(minutes=self.duration_minutes)
+        if not self.expires_at and self.duration_minutes is not None:
+            self.expires_at = timezone.now() + timedelta(minutes=self.duration_minutes)
         super().save(*args, **kwargs)
 
     @staticmethod
