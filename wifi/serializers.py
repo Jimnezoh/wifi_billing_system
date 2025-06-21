@@ -2,6 +2,8 @@ from rest_framework import serializers
 from .models import WifiAccessCode
 from users.models import User
 
+from .utils import send_sms
+
 class WifiAccessCodeSerializer(serializers.Serializer):
     
     # declaring the fields manually so as to be included in validated_data passed in model.
@@ -32,4 +34,11 @@ class WifiAccessCodeSerializer(serializers.Serializer):
         user, created = User.objects.get_or_create(phone_number=phone, defaults={"full_name": name or "Anonymous", "role": "client"})
 
         access_code = WifiAccessCode.objects.create(user=user, **validated_data)
+
+        #send SMS notification
+
+        message = f"Dear customer, your WiFi access code is {access_code.code}. It will expire at {access_code.expires_at}."
+        send_sms(phone, message)
+
+        
         return access_code
